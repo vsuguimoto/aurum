@@ -1,7 +1,11 @@
-# Aurum
+# Aurum - Levamos análise a sério.
 
 Damos a resposta para uma das dúvidas que o investidor possui:
-Quando eu devo investir?
+
+<center>
+**Quando eu devo investir?**
+</center>
+
 Através de nossa plataforma, utilizamos inteligência artificial para sinalizar a direção de um ativo no curto prazo.
 
 O target para este produto são investidores agressivos, que estão iniciando ou já conhecem sobre operações de curto prazo.
