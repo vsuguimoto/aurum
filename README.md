@@ -2,9 +2,7 @@
 
 Damos a resposta para uma das dúvidas que o investidor possui:
 
-<center>
 **Quando eu devo investir?**
-</center>
 
 Através de nossa plataforma, utilizamos inteligência artificial para sinalizar a direção de um ativo no curto prazo.
 
