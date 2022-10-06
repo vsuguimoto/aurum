@@ -1,6 +1,6 @@
 # Aurum - Levamos análise a sério.
 
-Damos a resposta para uma das dúvidas que o investidor possui:
+Damos a resposta a principal dúvida do investidor:
 
 **Quando eu devo investir?**
 
