@@ -13,16 +13,21 @@ def full_model_test(TICKER):
         _type_: _description_
     """
 
-    import maplotlib.pyplot as plt
+    import matplotlib.pyplot as plt
+    import numpy as np
     import pandas as pd
     import pandas_ta as ta
     import seaborn as sns
+
+    from src.data.data import get_ohlcv
 
     from sklearn.tree import DecisionTreeClassifier
     from sklearn.model_selection import GridSearchCV
     from sklearn.model_selection import TimeSeriesSplit
 
-    df = selecionar_ativo(TICKER, DIST_ALVO=5)
+    from dtreeviz.trees import dtreeviz
+
+    df = get_ohlcv(TICKER, DIST_ALVO=5)
 
 
     base_indicators = ta.Strategy(
@@ -88,10 +93,10 @@ def full_model_test(TICKER):
     param_grid = {
         'random_state': [42],
         'max_depth': [3, 4, 5],
-        'min_samples_leaf': [None, 5, 10, 20, 50],
-        'ccp_alpha': [0, 
+        'min_samples_leaf': [10, 20 , 25, 30, 50],
+        #'ccp_alpha': [0, 
         #.01, .02, .05
-        ],
+        #],
         'max_features': ['log2', 'sqrt']
     }
 
@@ -100,7 +105,7 @@ def full_model_test(TICKER):
         param_grid = param_grid,
         scoring='accuracy',
         cv=TimeSeriesSplit(4),
-        n_jobs=-1
+        n_jobs=4
     )
 
     grid_dt.fit(X_train, y_train)
