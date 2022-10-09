@@ -2,7 +2,7 @@
 Criado por: Vinicius Suguimoto
 '''
 
-def get_ohlcv(TICKER, SUAVIZAR=False, DIST_ALVO=5, ENTRADA_SAIDA_MODELO='Close'):
+def get_ohlcv(TICKER, DIST_ALVO=5, ENTRADA_SAIDA_MODELO='Close'):
     """### Descrição:
     Baixa os dados do ticker do Yahoo Finance e computa automaticamente o alvo de acordo com a distância presente no
     parâmetro DIST_ALVO. O alvo é binário, considerado como subiu ou caiu, será 1 quando o retorno for maior que 0.
@@ -40,13 +40,6 @@ def get_ohlcv(TICKER, SUAVIZAR=False, DIST_ALVO=5, ENTRADA_SAIDA_MODELO='Close')
     df['LEAK_Retorno'] = (df[ENTRADA_SAIDA_MODELO].shift(-DIST_ALVO) - df[ENTRADA_SAIDA_MODELO])/df[ENTRADA_SAIDA_MODELO].shift(-DIST_ALVO)
     df['Alvo'] = (df['LEAK_Retorno'] > 0.00).astype('int')
 
-
-    if SUAVIZAR == True:
-        ALPHA_FACTOR = .5
-        df['Open'] = df.Open.ewm(alpha=ALPHA_FACTOR).mean()
-        df['Close'] = df.Close.ewm(alpha=ALPHA_FACTOR).mean()
-        df['High'] = df.High.ewm(alpha=ALPHA_FACTOR).mean()
-        df['Low'] = df.Low.ewm(alpha=ALPHA_FACTOR).mean()
 
     return df
 
@@ -97,6 +90,44 @@ def get_wiki_pageviews(PAGE, df):
     final_df = final_df.merge(right=results_df, on='Date')
 
     return final_df
+
+def get_fund_indicators(ticker, label, min_date, max_date):
+    """TODO: Criar docstring
+    Função de requisição padrão para dados fundamentalistas
+
+    Args:
+        ticker (_type_): _description_
+        label (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+
+    import pandas as pd
+    import pandas_ta as ta
+    import yfinance as yf
+
+    from time import sleep
+    
+    TICKER = yf.Ticker(ticker) 
+    DATA = TICKER.history(
+        start=min_date,
+        end=max_date,
+        interval='1d',
+    ).reset_index()
+
+    # SMA -> Simple Moving Average
+    DATA[f'{label}_SMA_50'] = DATA.ta.sma(50)
+
+    # ROC -> Rate of Change
+    ROC_50 = DATA.ta.roc(50)
+    DATA[f'{label}_SMOOTHED_ROC_50DAYS'] = ROC_50.ewm(alpha=.1, ignore_na=True).mean()
+
+    # MANTER -> Função chamada em série um função posterior
+    # Para não sofrer um block da API colocamos um sleep de 3 segundos
+    sleep(3)
+
+    return DATA[['Date', f'{label}_SMA_50', f'{label}_SMOOTHED_ROC_50DAYS']]
 
 def gerar_dataset(TICKER):
     """TODO: Criar Dataset padrão para inputar features
