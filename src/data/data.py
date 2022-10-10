@@ -37,8 +37,8 @@ def get_ohlcv(TICKER, DIST_ALVO=5, ENTRADA_SAIDA_MODELO='Close'):
     assert DIST_ALVO > 0, 'O número de dias paro o alvo precisa ser maior ou igual a zero.'
     assert ENTRADA_SAIDA_MODELO in ['Open', 'Close'], 'A entrada e saída do modelo precisa ser igual a "Open" ou "Close".'
 
-    df['LEAK_Retorno'] = (df[ENTRADA_SAIDA_MODELO].shift(-DIST_ALVO) - df[ENTRADA_SAIDA_MODELO])/df[ENTRADA_SAIDA_MODELO].shift(-DIST_ALVO)
-    df['Alvo'] = (df['LEAK_Retorno'] > 0.00).astype('int')
+    df.loc[:, 'LEAK_Retorno'] = (df[ENTRADA_SAIDA_MODELO].shift(-DIST_ALVO) - df[ENTRADA_SAIDA_MODELO])/df[ENTRADA_SAIDA_MODELO].shift(-DIST_ALVO)
+    df.loc[:, 'Alvo'] = (df['LEAK_Retorno'] > 0.00).astype('int')
 
 
     return df
@@ -117,11 +117,11 @@ def get_fund_indicators(ticker, label, min_date, max_date):
     ).reset_index()
 
     # SMA -> Simple Moving Average
-    DATA[f'{label}_SMA_50'] = DATA.ta.sma(50)
+    DATA.loc[:, f'{label}_SMA_50'] = DATA.ta.sma(50)
 
     # ROC -> Rate of Change
     ROC_50 = DATA.ta.roc(50)
-    DATA[f'{label}_SMOOTHED_ROC_50DAYS'] = ROC_50.ewm(alpha=.1, ignore_na=True).mean()
+    DATA.loc[:, f'{label}_SMOOTHED_ROC_50DAYS'] = ROC_50.ewm(alpha=.1, ignore_na=True).mean()
 
     # MANTER -> Função chamada em série um função posterior
     # Para não sofrer um block da API colocamos um sleep de 3 segundos
@@ -129,8 +129,8 @@ def get_fund_indicators(ticker, label, min_date, max_date):
 
     return DATA[['Date', f'{label}_SMA_50', f'{label}_SMOOTHED_ROC_50DAYS']]
 
-def gerar_dataset(TICKER):
-    """TODO: Criar Dataset padrão para inputar features
+def gerar_dataset(TICKER, pagina_wiki):
+    """TODO: Criar Dataset padrão com todas as features
 
     Args:
         TICKER (_type_): _description_
@@ -138,4 +138,13 @@ def gerar_dataset(TICKER):
     Returns:
         _type_: _description_
     """
-    return None
+
+    from src.features.ft import technical_indicators, wiki_indicators, fundamentalist_indicators
+
+    df = get_ohlcv(TICKER, DIST_ALVO=5, ENTRADA_SAIDA_MODELO='Close')
+
+    df = technical_indicators(df)
+    df = fundamentalist_indicators(df)
+    df = wiki_indicators(pagina_wiki, df)
+
+    return df
