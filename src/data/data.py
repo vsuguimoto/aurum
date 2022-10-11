@@ -37,7 +37,7 @@ def get_ohlcv(TICKER, DIST_ALVO=5, ENTRADA_SAIDA_MODELO='Close'):
     assert DIST_ALVO > 0, 'O número de dias paro o alvo precisa ser maior ou igual a zero.'
     assert ENTRADA_SAIDA_MODELO in ['Open', 'Close'], 'A entrada e saída do modelo precisa ser igual a "Open" ou "Close".'
 
-    df.loc[:, 'LEAK_Retorno'] = (df[ENTRADA_SAIDA_MODELO].shift(-DIST_ALVO) - df[ENTRADA_SAIDA_MODELO])/df[ENTRADA_SAIDA_MODELO].shift(-DIST_ALVO)
+    df.loc[:, 'LEAK_Retorno'] = (df[ENTRADA_SAIDA_MODELO].shift(-DIST_ALVO) - df[ENTRADA_SAIDA_MODELO])/df[ENTRADA_SAIDA_MODELO]
     df.loc[:, 'Alvo'] = (df['LEAK_Retorno'] > 0.00).astype('int')
 
 
