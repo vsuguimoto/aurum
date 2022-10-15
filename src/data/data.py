@@ -29,7 +29,7 @@ def get_ohlcv(TICKER, DIST_ALVO=5, ENTRADA_SAIDA_MODELO='Close'):
     ticker = yf.Ticker(TICKER) 
 
     df = ticker.history(
-        start='2017-01-01',
+        start='2019-06-01',
         end='2022-06-01',
         interval='1d',
     ).reset_index()
