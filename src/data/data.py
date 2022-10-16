@@ -2,7 +2,7 @@
 Criado por: Vinicius Suguimoto
 '''
 
-def get_ohlcv(TICKER, DIST_ALVO=5, ENTRADA_SAIDA_MODELO='Close'):
+def get_ohlcv(TICKER, DIST_ALVO=5, ENTRADA_SAIDA_MODELO='Close', TREINO=True):
     """### Descrição:
     Baixa os dados do ticker do Yahoo Finance e computa automaticamente o alvo de acordo com a distância presente no
     parâmetro DIST_ALVO. O alvo é binário, considerado como subiu ou caiu, será 1 quando o retorno for maior que 0.
@@ -14,11 +14,10 @@ def get_ohlcv(TICKER, DIST_ALVO=5, ENTRADA_SAIDA_MODELO='Close'):
 
     ### Args:
         TICKER (str): Ticker do Yahoo Finance.
-        SUAVIZAR (bool, optional): Suaviza os dados OHLC com uma média móvel com alpha de 0,5. Defaults to False.
         DIST_ALVO (int, optional): Número de dias no futuro para o retorno ser calculado, ou seja, o tempo que se permanece
         na operação. Defaults to 1.
         ENTRADA_SAIDA_MODELO (str, optional): "Open" ou "Close", é a entrada do modelo. Defaults to 'Close'.
-
+        TREINO (bool, optional): True para trazer dados para treinar um modelo, False para realizar as validações. Defaults to True.
     ### Returns:
         pandas.Dataframe: Retorna um dataframe com dados OHLC, retorno e alvo.
     """
@@ -28,18 +27,25 @@ def get_ohlcv(TICKER, DIST_ALVO=5, ENTRADA_SAIDA_MODELO='Close'):
 
     ticker = yf.Ticker(TICKER) 
 
-    df = ticker.history(
-        start='2019-06-01',
-        end='2022-06-01',
-        interval='1d',
-    ).reset_index()
+    if TREINO == True:
+        df = ticker.history(
+            start='2019-06-01',
+            end='2022-06-01',
+            interval='1d',
+        ).reset_index()
+
+    else:
+        df = ticker.history(
+            start='2022-06-01',
+            interval='1d',
+        ).reset_index()
+
 
     assert DIST_ALVO > 0, 'O número de dias paro o alvo precisa ser maior ou igual a zero.'
     assert ENTRADA_SAIDA_MODELO in ['Open', 'Close'], 'A entrada e saída do modelo precisa ser igual a "Open" ou "Close".'
 
     df.loc[:, 'LEAK_Retorno'] = (df[ENTRADA_SAIDA_MODELO].shift(-DIST_ALVO) - df[ENTRADA_SAIDA_MODELO])/df[ENTRADA_SAIDA_MODELO]
     df.loc[:, 'Alvo'] = (df['LEAK_Retorno'] > 0.00).astype('int')
-
 
     return df
 
