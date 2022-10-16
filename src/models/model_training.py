@@ -1,4 +1,7 @@
 
+from src.data.data import get_ohlcv
+
+
 def full_model_test(TICKER):
     """TODO:
     - Transformar base_indicators em parâmetros;
@@ -94,9 +97,6 @@ def full_model_test(TICKER):
         'random_state': [42],
         'max_depth': [3, 4, 5],
         'min_samples_leaf': [10, 20 , 25, 30, 50],
-        #'ccp_alpha': [0, 
-        #.01, .02, .05
-        #],
         'max_features': ['log2', 'sqrt']
     }
 
@@ -161,3 +161,113 @@ def full_model_test(TICKER):
     plt.show()
 
     return grid_dt.best_estimator_
+
+
+def train_basic_model(TICKER):
+
+    import joblib
+
+    from src.data.data import get_ohlcv
+    from src.features.ft import technical_indicators
+    from sklearn.tree import DecisionTreeClassifier
+    from sklearn.model_selection import GridSearchCV
+    from sklearn.model_selection import TimeSeriesSplit
+
+    df = get_ohlcv(TICKER)
+    df = technical_indicators(df)
+
+    FEATURES = [
+        'RSI_14', 
+        'STOCHd_14_3_3',
+        'ROC_2',
+        'ROC_5',
+        'ROC_10',
+        'EMA_BUY_CROSS',
+        'EMA_SELL_CROSS',
+        'EMA_9_DISTANCE', 
+        'EMA_21_DISTANCE',
+        'BBAND_FechouFora_Lower', 
+        'BBAND_FechouFora_Upper',
+        'SLOPE_3',
+        'ATRr_5',
+        'WILLR_14',
+        'OBV_ROC_14'
+    ]
+
+    TARGET = ['Alvo']
+
+    train_size = int(len(df) * .85)
+
+    X_train = df.loc[:train_size, FEATURES]
+    y_train = df.loc[:train_size, TARGET]
+
+    X_test = df.loc[train_size:, FEATURES]
+    y_test = df.loc[train_size:, TARGET]
+
+    param_grid = {
+        'random_state': [42],
+        'max_depth': [4, 5, 6],
+        'min_samples_leaf': [10, 20 , 25, 30, 50],
+        'max_features': ['log2', 'sqrt']
+    }
+
+    grid_dt = GridSearchCV(
+        DecisionTreeClassifier(),
+        param_grid = param_grid,
+        scoring='accuracy',
+        cv=TimeSeriesSplit(5),
+    )
+
+    grid_dt.fit(X_train, y_train)
+
+    joblib.dump(grid_dt, f'models/basic_{TICKER}.sav')
+
+    pass
+
+
+def make_predictions(TICKER):
+
+    import numpy as np
+    import joblib
+
+    from src.data.data import get_ohlcv
+    from src.features.ft import technical_indicators
+
+    try:
+        model = joblib.load(f'models/basic_{TICKER}.sav')
+
+    except:
+        train_basic_model(TICKER)
+        model = joblib.load(f'models/basic_{TICKER}.sav')
+
+    df = get_ohlcv(TICKER, TREINO=False)
+    df = technical_indicators(df)
+
+    # TODO: No momento as features estão chumbadas, em tese é necessário ler os metadados
+    # do modelo para ser levado em consideração
+
+    FEATURES = [
+        'RSI_14', 
+        'STOCHd_14_3_3',
+        'ROC_2',
+        'ROC_5',
+        'ROC_10',
+        'EMA_BUY_CROSS',
+        'EMA_SELL_CROSS',
+        'EMA_9_DISTANCE', 
+        'EMA_21_DISTANCE',
+        'BBAND_FechouFora_Lower', 
+        'BBAND_FechouFora_Upper',
+        'SLOPE_3',
+        'ATRr_5',
+        'WILLR_14',
+        'OBV_ROC_14'
+    ]
+
+    pred = model.predict(df[FEATURES])
+
+    df['RETORNO_MODELO'] = 1 + ((df['LEAK_Retorno']/5) * pred)
+    df['RETORNO_ACUMULADO_MODELO'] = df['RETORNO_MODELO'].cumprod()
+    df['RETORNO_ACUMULADO_BNH'] = 1 + (df['Close'] - df.loc[0, 'Close'])/df.loc[0, 'Close']
+
+    return df
