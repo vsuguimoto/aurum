@@ -271,3 +271,19 @@ def make_predictions(TICKER):
     df['RETORNO_ACUMULADO_BNH'] = 1 + (df['Close'] - df.loc[0, 'Close'])/df.loc[0, 'Close']
 
     return df
+
+
+def create_setup(X_train, y_train):
+
+    from sklearn.tree import DecisionTreeClassifier
+    
+    dtc = DecisionTreeClassifier(
+        random_state = 42,
+        max_depth = 3
+    )
+
+    dtc.fit(X_train, y_train)
+
+    return dtc
+
+

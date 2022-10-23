@@ -95,3 +95,26 @@ def technical_indicators(df):
     df_copy.loc[:, 'BBAND_FechouFora_Upper'] = df_copy['Close'] >  df_copy[f'BBU_10_2.0']
 
     return df_copy
+
+def traduzir_nome_colunas(df):
+    """_summary_
+
+    Args:
+        df (_type_): _description_
+    """
+
+    TRADUTOR = {
+        'EMA_9_DISTANCE': 'Distância da Média Móvel Exponencial de 9 períodos',
+        'EMA_21_DISTANCE': 'Distância da Média Móvel Exponencial de 21 períodos',
+        'BBAND_FechouFora_Upper': 'Preço fechou fora da Banda de Bollinger Superior',
+        'BBAND_FechouFora_Lower': 'Preço fechou fora da Banda de Bollinger Inferior',
+        'RSI_14': 'Indice de Força Relativa de 14 períodos',
+        'ROC_5': 'Rate of Change de 5 dias',
+        'STOCHk_14_3_3': 'Oscilador Estocástico rápido 14-3-3',
+    }
+
+    df_copy = df[:]
+
+    df_copy = df_copy.rename(TRADUTOR, axis=1)
+
+    return df_copy
