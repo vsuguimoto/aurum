@@ -44,6 +44,7 @@ def main_analysis():
     if st.button('Criar Setup'):
 
         st.markdown(f'## Setup para {ANALISE}')
+        
         DATA = get_ohlcv(ANALISE)
         DATA = technical_indicators(DATA)
         DATA = traduzir_nome_colunas(DATA)

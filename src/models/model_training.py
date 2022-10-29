@@ -1,4 +1,3 @@
-
 from src.data.data import get_ohlcv
 
 
@@ -220,7 +219,7 @@ def train_basic_model(TICKER):
 
     grid_dt.fit(X_train, y_train)
 
-    joblib.dump(grid_dt, f'models/basic_{TICKER}.sav')
+    joblib.dump(grid_dt, f'models/Silver - {TICKER}.sav')
 
     pass
 
@@ -234,11 +233,11 @@ def make_predictions(TICKER):
     from src.features.ft import technical_indicators
 
     try:
-        model = joblib.load(f'models/basic_{TICKER}.sav')
+        model = joblib.load(f'models/Silver - {TICKER}.sav')
 
     except:
         train_basic_model(TICKER)
-        model = joblib.load(f'models/basic_{TICKER}.sav')
+        model = joblib.load(f'models/Silver - {TICKER}.sav')
 
     df = get_ohlcv(TICKER, TREINO=False)
     df = technical_indicators(df)
@@ -279,7 +278,7 @@ def create_setup(X_train, y_train):
     
     dtc = DecisionTreeClassifier(
         random_state = 42,
-        max_depth = 3
+        max_depth = 4
     )
 
     dtc.fit(X_train, y_train)

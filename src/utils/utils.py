@@ -35,3 +35,53 @@ def svg_write(svg, center=True):
 
     # Write the HTML
     st.write(html, unsafe_allow_html=True)
+
+
+def model_results(MODEL_NAME):
+
+    from src.data.data import get_ohlcv
+    from src.features.ft import technical_indicators
+    from src.models.model_training import train_basic_model
+
+    import joblib
+    import pandas as pd
+
+    TICKER = pd.Series(MODEL_NAME).str.extract('- (.*.SA)')[0][0]
+
+    TEST = get_ohlcv(TICKER, TREINO=False)
+    TEST = technical_indicators(TEST)
+    
+    MODEL = joblib.load(f'models/{MODEL_NAME}')
+    pred = MODEL.predict(TEST[MODEL.feature_names_in_])
+
+    TEST['Ticker'] = TICKER
+    TEST['Retorno do Modelo'] = pred * TEST['LEAK_Retorno']/4
+    TEST['Retorno Buy and Hold'] = (TEST['Close'] - TEST.loc[0, 'Close'])/TEST.loc[0, 'Close']
+
+    RETURN = TEST[['Ticker','Date', 'Retorno do Modelo','Retorno Buy and Hold']]
+
+    return RETURN
+
+
+def wallet_return(RETURN_LIST, TICKER_WEIGHT):
+
+    import numpy as np
+    import pandas as pd
+
+    assert len(RETURN_LIST) == len(TICKER_WEIGHT)
+    assert sum(TICKER_WEIGHT) == 1
+
+    
+    RETORNO_PONDERADO_MODELO = np.zeros(len(RETURN_LIST[0]))
+
+    for i, retorno in enumerate(RETURN_LIST):
+
+        RETORNO_PONDERADO_MODELO += retorno['Retorno do Modelo'] * TICKER_WEIGHT[i]
+
+    RETORNO_ACUMULADO_MODELO = (1 + RETORNO_PONDERADO_MODELO).cumprod()
+
+    RESULTADOS = pd.DataFrame(RETORNO_ACUMULADO_MODELO)
+    RESULTADOS['Date'] = RETURN_LIST[0]['Date']
+    RESULTADOS['Retorno da Carteira'] = RETORNO_ACUMULADO_MODELO
+
+    return RESULTADOS[['Date', 'Retorno da Carteira']]
