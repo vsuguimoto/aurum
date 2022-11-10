@@ -60,6 +60,7 @@ def pagina_principal():
     with col2:
         st.markdown('**Rodrigo Figueiredo**')
         st.markdown('[Linkedin](https://www.linkedin.com/in/rodrigo-figueiredo-73056732)')
+        st.markdown('[Github](https://github.com/FIGUEIREDOGITHUB)')
 
     with col3:
         st.markdown('**Vinicius Suguimoto**')
