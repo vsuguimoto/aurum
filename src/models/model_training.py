@@ -265,6 +265,7 @@ def make_predictions(TICKER):
 
     pred = model.predict(df[FEATURES])
 
+    # Porque /5? -> TODO
     df['RETORNO_MODELO'] = 1 + ((df['LEAK_Retorno']/5) * pred)
     df['RETORNO_ACUMULADO_MODELO'] = df['RETORNO_MODELO'].cumprod()
     df['RETORNO_ACUMULADO_BNH'] = 1 + (df['Close'] - df.loc[0, 'Close'])/df.loc[0, 'Close']

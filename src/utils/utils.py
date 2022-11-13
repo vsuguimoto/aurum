@@ -55,7 +55,7 @@ def model_results(MODEL_NAME):
     pred = MODEL.predict(TEST[MODEL.feature_names_in_])
 
     TEST['Ticker'] = TICKER
-    TEST['Retorno do Modelo'] = pred * TEST['LEAK_Retorno']/4
+    TEST['Retorno do Modelo'] = pred * TEST['LEAK_Retorno']/5
     TEST['Retorno Buy and Hold'] = (TEST['Close'] - TEST.loc[0, 'Close'])/TEST.loc[0, 'Close']
 
     RETURN = TEST[['Ticker','Date', 'Retorno do Modelo','Retorno Buy and Hold']]
