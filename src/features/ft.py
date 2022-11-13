@@ -84,7 +84,7 @@ def technical_indicators(df):
     df_copy.ta.strategy(base_indicators)
     df_copy.loc[:, 'OBV_ROC_14'] = ((df_copy.OBV - df_copy.OBV.rolling(14).mean())/ df_copy.OBV.rolling(14).mean())
 
-    df_copy = df_copy.dropna().reset_index(drop=True)
+    df_copy = df_copy.dropna(subset=['EMA_21']).reset_index(drop=True)
 
     df_copy.loc[:, 'EMA_BUY_CROSS'] = ta.cross(df_copy.EMA_9, df_copy.EMA_21, asint=False)
     df_copy.loc[:, 'EMA_SELL_CROSS'] = ta.cross(df_copy.EMA_21, df_copy.EMA_9, asint=False)

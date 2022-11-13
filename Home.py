@@ -29,7 +29,8 @@ def pagina_principal():
     botao = st.button('Analisar')
 
     if botao:
-        df = aurum.model_training.make_predictions(ANALISE)
+        # Necessario manter o .dropna() pelo período de holding da estratégia
+        df = aurum.model_training.make_predictions(ANALISE).dropna()
 
         h_col1, h_col2 = st.columns(2)
         with h_col1:
@@ -37,15 +38,15 @@ def pagina_principal():
         hoje seu investimento equivaleria a **R\$ {1000*(df.RETORNO_ACUMULADO_BNH.to_list()[-1]):.2f}**.
         ''')
         with h_col2:
-            st.metric('Com nossa estratégia esse valor seria de:', f'R$ {1000*(df.RETORNO_ACUMULADO_MODELO.to_list()[-2]):.2f}')
+            st.metric('Com nossa estratégia esse valor seria de:', f'R$ {1000*(df.RETORNO_ACUMULADO_MODELO.to_list()[-1]):.2f}')
 
         st.plotly_chart(plot_returns(df, ANALISE))
 
         f_col1, f_col2 = st.columns(2)
         with f_col1:
-            st.metric('Variação percentual:', f'{(df.RETORNO_ACUMULADO_MODELO.to_list()[-2]*100):.2f}%')
+            st.metric('Variação percentual:', f'{(df.RETORNO_ACUMULADO_MODELO.to_list()[-1]*100):.2f}%')
         with f_col2:
-            st.metric('Lucro:', f'R$ {1000*(df.RETORNO_ACUMULADO_MODELO.to_list()[-2])-1000:.2f}')
+            st.metric('Lucro:', f'R$ {1000*(df.RETORNO_ACUMULADO_MODELO.to_list()[-1])-1000:.2f}')
 
 
     st.write('---')
