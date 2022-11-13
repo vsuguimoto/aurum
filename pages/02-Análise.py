@@ -24,7 +24,7 @@ def main_analysis():
 
     st.markdown('**Digite o Ticker da ação**')
     
-    ANALISE = st.text_input(' ')
+    ANALISE = st.text_input(' ').upper()
 
     st.markdown('**Selecione os indicadores**')
     INDICADORES = st.multiselect(

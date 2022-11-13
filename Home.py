@@ -2,7 +2,7 @@ import streamlit as st
 import numpy as np
 import aurum
 
-TITULO_PROJETO = 'Aurum'
+TITULO_PROJETO = 'Aurum Praesagio'
 
 st.set_page_config(
         page_title=TITULO_PROJETO,
@@ -22,7 +22,9 @@ def pagina_principal():
     ''')
     
     st.subheader('Faça sua simulação')
-    ANALISE = st.text_input(' ')
+    # Nota: o nome do Ticker precisa ser maiúsculo para evitar duplicatas
+    # nos modelos treinados - Manter o .upper()
+    ANALISE = st.text_input(' ').upper()
 
     botao = st.button('Analisar')
 
