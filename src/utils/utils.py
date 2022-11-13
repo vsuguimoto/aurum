@@ -46,7 +46,7 @@ def model_results(MODEL_NAME):
     import joblib
     import pandas as pd
 
-    TICKER = pd.Series(MODEL_NAME).str.extract('- (.*.SA)')[0][0]
+    TICKER = pd.Series(MODEL_NAME).str.extract('- (.*.).sav')[0][0]
 
     TEST = get_ohlcv(TICKER, TREINO=False)
     TEST = technical_indicators(TEST)

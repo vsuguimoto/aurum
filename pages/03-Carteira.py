@@ -19,8 +19,12 @@ st.set_page_config(
 def header():
     st.markdown('## Monte sua carteira')
     st.markdown('''
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras porttitor mollis tincidunt.
-    Sed fermentum elit lorem, eu finibus nisl maximus nec. Sed eget massa eget ligula blandit tincidunt eu eget lacus.
+    Selecione os modelos dos ativos correspondentes para compor sua carteira. Temos dois tipos de modelos
+    disponíveis:  
+        - Modelos Silver: estratégias desenvolvidas automaticamente pela inteligência artificial com base nos indicadores pré selecionados pelos analistas.  
+        - Modelos Gold:
+
+    **Como funciona:**
     ''')
     st.markdown('---')
 
@@ -39,7 +43,7 @@ def montar_carteira():
     )
 
     if MODELOS_SELECIONADOS != []:
-        TICKERS = pd.Series(MODELOS_SELECIONADOS).str.extract('- (.*.SA)')
+        TICKERS = pd.Series(MODELOS_SELECIONADOS).str.extract('- (.*.).sav')
 
         with st.form('Pesos:'):
             PESOS = [atribuir_peso(TICKER) for TICKER in TICKERS[0]]
