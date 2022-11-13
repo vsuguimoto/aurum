@@ -39,7 +39,7 @@ def montar_carteira():
         'Escolha os ativos',
         options=os.listdir('models'),
         format_func=lambda x: x.split('.')[0],
-    # TODO: Adicionar Máximo de inputs
+        max_selections=5 # Limita o número de ativos a serem escolhidos
     )
 
     if MODELOS_SELECIONADOS != []:
@@ -57,6 +57,40 @@ def montar_carteira():
         if BOTAO_BALANCEAR_CARTEIRA:
 
             RESULTADO_MODELOS = [model_results(MODEL) for MODEL in MODELOS_SELECIONADOS]
+            RESULTADO_MODELOS_PIVOT = (pd.concat(RESULTADO_MODELOS)
+                                         .pivot_table(
+                                                index='Date',
+                                                columns=['Ticker'],
+                                                values=['Predicao', 'Retorno do Modelo'])).tail(10)
+
+
+
+            st.markdown('**Posições em finalização:**  ')
+
+            POSICAO_EM_FECHAMENTO = RESULTADO_MODELOS_PIVOT.iloc[-6]
+            RESULT_ULT_POSICAO = POSICAO_EM_FECHAMENTO['Retorno do Modelo'][POSICAO_EM_FECHAMENTO.Predicao == 1].reset_index()
+            
+            COLS_POS_FINALIZACO = st.columns(5)
+
+            if len(RESULT_ULT_POSICAO) > 0:
+                for i, res in RESULT_ULT_POSICAO.iterrows():
+                    with COLS_POS_FINALIZACO[i]:
+                        st.metric(label=res.Ticker, value=f'{res.iloc[-1]:.2%}')
+            else:
+                st.markdown('Sem posições abertas.')
+
+
+            st.markdown('**Posições em abertura:**  ')
+
+            ULTIMA_ABERTURA = RESULTADO_MODELOS_PIVOT.iloc[-1].Predicao.reset_index()
+            ULTIMA_ABERTURA['Sinal'] = ['Compra' if x == 1 else '-' for x in ULTIMA_ABERTURA.iloc[:, -1]]
+            
+            COL_POS_ABERTURA = st.columns(5)
+
+            for i, row in ULTIMA_ABERTURA.iterrows():
+                with COL_POS_ABERTURA[i]:
+                    st.metric(label=row.Ticker, value=row.Sinal)
+
             RESULTS = wallet_return(RESULTADO_MODELOS, PESOS)
 
             st.plotly_chart(plot_retorno_carteira(RESULTS))

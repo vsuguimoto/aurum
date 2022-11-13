@@ -41,7 +41,6 @@ def model_results(MODEL_NAME):
 
     from src.data.data import get_ohlcv
     from src.features.ft import technical_indicators
-    from src.models.model_training import train_basic_model
 
     import joblib
     import pandas as pd
@@ -52,13 +51,13 @@ def model_results(MODEL_NAME):
     TEST = technical_indicators(TEST)
     
     MODEL = joblib.load(f'models/{MODEL_NAME}')
-    pred = MODEL.predict(TEST[MODEL.feature_names_in_])
+    TEST['Predicao'] = MODEL.predict(TEST[MODEL.feature_names_in_])
 
     TEST['Ticker'] = TICKER
-    TEST['Retorno do Modelo'] = pred * TEST['LEAK_Retorno']/5
-    TEST['Retorno Buy and Hold'] = (TEST['Close'] - TEST.loc[0, 'Close'])/TEST.loc[0, 'Close']
+    TEST['Retorno do Modelo'] = TEST['Predicao'] * TEST['LEAK_Retorno']/5
+    
 
-    RETURN = TEST[['Ticker','Date', 'Retorno do Modelo','Retorno Buy and Hold']]
+    RETURN = TEST[['Ticker', 'Date', 'Predicao', 'Retorno do Modelo']]
 
     return RETURN
 
