@@ -24,7 +24,7 @@ def pagina_principal():
     st.subheader('Faça sua simulação')
     # Nota: o nome do Ticker precisa ser maiúsculo para evitar duplicatas
     # nos modelos treinados - Manter o .upper()
-    ANALISE = st.text_input(' ').upper()
+    ANALISE = st.text_input('Digite um ticker de um ativo com final ".SA" - Exemplo: PETR4.SA').upper()
 
     botao = st.button('Analisar')
 
@@ -34,7 +34,7 @@ def pagina_principal():
 
         h_col1, h_col2 = st.columns(2)
         with h_col1:
-            st.write(f'''Se tivesse investido **R\$ 1000.00** em **{ANALISE}** há um ano,
+            st.write(f'''Se tivesse investido **R\$ 1000.00** em **{ANALISE}** no dia {df.Date.dt.date.min()},
         hoje seu investimento equivaleria a **R\$ {1000*(df.RETORNO_ACUMULADO_BNH.to_list()[-1]):.2f}**.
         ''')
         with h_col2:
