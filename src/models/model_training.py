@@ -265,7 +265,11 @@ def make_predictions(TICKER):
 
     pred = model.predict(df[FEATURES])
 
-    # Porque /5? -> TODO
+    ## Porque dividido por 5?
+    # A estratégia consiste em entradas parciais de até 5 dias, caso o modelo
+    # dê sinal positivo para compra hoje, se entrarmos com todo o capital
+    # disponivel para aquele ativo não poderíamos entrar em um possível sinal
+    # no próximo dia.
     df['RETORNO_MODELO'] = 1 + ((df['LEAK_Retorno']/5) * pred)
     df['RETORNO_ACUMULADO_MODELO'] = df['RETORNO_MODELO'].cumprod()
     df['RETORNO_ACUMULADO_BNH'] = 1 + (df['Close'] - df.loc[0, 'Close'])/df.loc[0, 'Close']
