@@ -10,7 +10,7 @@ from src.utils.utils import model_results, wallet_return
 TITULO_PROJETO = 'Aurum Praesagio'
 
 st.set_page_config(
-        page_title=f'{TITULO_PROJETO} - Análise',
+        page_title=f'{TITULO_PROJETO} - Carteira',
         page_icon='🔮',
         layout="centered",
         initial_sidebar_state="auto",
@@ -24,7 +24,14 @@ def header():
         - Modelos Silver: estratégias desenvolvidas automaticamente pela inteligência artificial com base nos indicadores pré selecionados pelos analistas.  
         - Modelos Gold: estratégias desenvolvidas pelos especialistas utilizando inteligência artificial com indicadores customizados
 
-    **Como funciona:**
+    ''')
+
+    st.subheader('Como funciona a estratégia?')
+    st.write('''
+    **1º** - Monte sua carteira com até 5 ativos;  
+    **2º** - Caso prefira, mude o peso de cada ativo na composição da carteira;  
+    **3º** - Verifique se há sinais de Compra no tópico Posições em abertura, caso houver, abra uma posição no ativo de acordo com a proporção da estipulada;  
+    **4º** - Após 5 dias úteis, finalize a posição, ou mantenha caso haja uma nova abertura para o dia.
     ''')
     st.markdown('---')
 
@@ -62,12 +69,24 @@ def montar_carteira():
                                                 values=['Predicao', 'Retorno do Modelo'])).tail(10)
 
 
+            ULTIMA_ABERTURA = RESULTADO_MODELOS_PIVOT.iloc[-1].Predicao.reset_index()
+            ULTIMA_ABERTURA['Sinal'] = ['Compra' if x == 1 else '-' for x in ULTIMA_ABERTURA.iloc[:, -1]]
 
-            st.markdown('**Posições em finalização:**  ')
+            st.markdown(f'**Posições em abertura para o dia {ULTIMA_ABERTURA.columns[1]:%d/%m/%Y}:**  ')
+            COL_POS_ABERTURA = st.columns(5)
+
+            for i, row in ULTIMA_ABERTURA.iterrows():
+                with COL_POS_ABERTURA[i]:
+                    st.metric(label=row.Ticker, value=row.Sinal)
+
+
+            
 
             POSICAO_EM_FECHAMENTO = RESULTADO_MODELOS_PIVOT.iloc[-6]
             RESULT_ULT_POSICAO = POSICAO_EM_FECHAMENTO['Retorno do Modelo'][POSICAO_EM_FECHAMENTO.Predicao == 1].reset_index()
             
+            st.markdown(f'**Posições em finalização referente ao dia {RESULT_ULT_POSICAO.columns[1]:%d/%m/%Y}:**  ')
+
             COLS_POS_FINALIZACO = st.columns(5)
 
             if len(RESULT_ULT_POSICAO) > 0:
@@ -78,16 +97,6 @@ def montar_carteira():
                 st.markdown('Sem posições abertas.')
 
 
-            st.markdown('**Posições em abertura:**  ')
-
-            ULTIMA_ABERTURA = RESULTADO_MODELOS_PIVOT.iloc[-1].Predicao.reset_index()
-            ULTIMA_ABERTURA['Sinal'] = ['Compra' if x == 1 else '-' for x in ULTIMA_ABERTURA.iloc[:, -1]]
-            
-            COL_POS_ABERTURA = st.columns(5)
-
-            for i, row in ULTIMA_ABERTURA.iterrows():
-                with COL_POS_ABERTURA[i]:
-                    st.metric(label=row.Ticker, value=row.Sinal)
 
             RESULTS = wallet_return(RESULTADO_MODELOS, PESOS)
 
@@ -111,15 +120,76 @@ def atribuir_peso(TICKER,VALOR_DEFAULT):
     return PESO/100
 
 
-def plot_retorno_carteira(RETORNO):
+def plot_retorno_carteira(df):
 
-    import plotly.express as px
+    import plotly.graph_objects as go
+    import plotly.offline as pyo
 
-    fig = px.line(RETORNO,x='Date', y='Retorno da Carteira')
+    pyo.init_notebook_mode()
 
-    return fig
+    figure = go.Figure(
+    )
 
 
+
+    figure.add_trace(
+        go.Scatter(
+            x=df['Date'],
+            y=df['Retorno da Carteira'],
+            hoverinfo=None,
+            name='Retorno da Carteira',
+            line={                      
+                'color':'#FF7E66',
+                'shape':'spline',
+                'smoothing':0.3,
+                'width':3
+            }
+        )
+    )
+    # TODO: Incluir IBOV
+    # figure.add_trace(
+    #     go.Scatter(
+    #         x=df.Date,
+    #         y=df.RETORNO_ACUMULADO_BNH,
+    #         hoverinfo=None,
+    #         name='Buy and Hold',
+    #         line={                      
+    #             'color':'#2B2B2B',
+    #             'shape':'spline',
+    #             'smoothing':0.3,
+    #             'width':3
+    #         },
+    #         opacity=.5
+    #     )
+    # )
+
+    # Atualizando adicionando titulo e mudando cor do Background
+    figure.update_layout(
+        plot_bgcolor='#F7F7F7',
+        paper_bgcolor='#F7F7F7',
+        title='Evolução Patrimonial'
+    )
+
+    # Atualizando os Eixos
+    figure.update_yaxes(
+            showgrid=True,
+            showticklabels=True,
+            tickformat='.0%',
+            gridcolor='#CFCFCE',
+            fixedrange=True,
+            color='#2B2B2B',
+            hoverformat='.0%'
+            
+    )
+    figure.update_xaxes(
+            showgrid=False,
+            showticklabels=True,
+            fixedrange=True,
+            hoverformat='%d/%m/%Y'
+            
+    )
+
+    return figure
 
 if __name__=='__main__':
     montar_carteira()
