@@ -47,12 +47,10 @@ def montar_carteira():
         VALOR_DEFAULT = 100/len(TICKERS)
 
         with st.expander('Balancear a carteira',expanded=False):
-            #with st.form('Pesos:', clear_on_submit=False):
             PESOS = [atribuir_peso(TICKER,VALOR_DEFAULT) for TICKER in TICKERS[0]]
             st.metric(label='Composição percentual final:',value=sum(PESOS)*100)
 
         BOTAO_BALANCEAR_CARTEIRA = st.button('Montar carteira')
-                #PESOS_SUBMIT = st.form_submit_button("Finalizar")
 
         if BOTAO_BALANCEAR_CARTEIRA:
 
