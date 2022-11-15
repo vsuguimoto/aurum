@@ -2,6 +2,7 @@ import streamlit as st
 import numpy as np
 import aurum
 
+
 TITULO_PROJETO = 'Aurum Praesagio'
 
 st.set_page_config(
@@ -15,9 +16,9 @@ def pagina_principal():
     
     st.title(TITULO_PROJETO)
     
-    st.subheader('Utilizando Inteligência Artificial para te aumentar seu lucro!')
+    st.subheader('Utilizando Inteligência Artificial para aumentar seu lucro!')
     st.write('''
-    Treinamos diversos modelos de AI com os indicadores técnicos mais utilizados no mercado para simplificar sua tomada de decisão
+    Desenvolvemos diversos modelos de AI com os indicadores técnicos mais utilizados no mercado para simplificar sua tomada de decisão
     poupando seu tempo e melhorando sua assertividade.
     ''')
     
@@ -34,7 +35,8 @@ def pagina_principal():
 
         h_col1, h_col2 = st.columns(2)
         with h_col1:
-            st.write(f'''Se tivesse investido **R\$ 1000.00** em **{ANALISE}** no dia {df.Date.dt.date.min()},
+            DATA_MIN = df.Date.dt.date.min() 
+            st.write(f'''Se tivesse investido **R\$ 1000.00** em **{ANALISE}** no dia {DATA_MIN:%d/%m/%Y},
         hoje seu investimento equivaleria a **R\$ {1000*(df.RETORNO_ACUMULADO_BNH.to_list()[-1]):.2f}**.
         ''')
         with h_col2:
@@ -44,11 +46,11 @@ def pagina_principal():
 
         f_col1, f_col2 = st.columns(2)
         with f_col1:
-            st.metric('Variação percentual:', f'{(df.RETORNO_ACUMULADO_MODELO.to_list()[-1]*100):.2f}%')
+            st.metric('Variação percentual:', f'{(df.RETORNO_ACUMULADO_MODELO.to_list()[-1]*100-100):.2f}%')
         with f_col2:
             st.metric('Lucro:', f'R$ {1000*(df.RETORNO_ACUMULADO_MODELO.to_list()[-1])-1000:.2f}')
 
-
+    
     st.write('---')
     
     st.subheader('Equipe')
