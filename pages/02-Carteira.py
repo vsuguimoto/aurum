@@ -30,7 +30,7 @@ def header():
     st.write('''
     **1º** - Monte sua carteira com até 5 ativos;  
     **2º** - Caso prefira, mude o peso de cada ativo na composição da carteira;  
-    **3º** - Verifique se há sinais de Compra no tópico Posições em abertura, caso houver, abra uma posição no ativo de acordo com a proporção da estipulada;  
+    **3º** - Verifique se há sinais de Compra no tópico Posições em abertura, caso houver, abra uma posição no ativo de acordo com a proporção estipulada;  
     **4º** - Após 5 dias úteis, finalize a posição, ou mantenha caso haja uma nova abertura para o dia.
     ''')
     st.markdown('---')
@@ -55,6 +55,7 @@ def montar_carteira():
 
         with st.expander('Balancear a carteira',expanded=False):
             PESOS = [atribuir_peso(TICKER,VALOR_DEFAULT) for TICKER in TICKERS[0]]
+            
             st.metric(label='Composição percentual final:',value=sum(PESOS)*100)
 
         BOTAO_BALANCEAR_CARTEIRA = st.button('Montar carteira')
