@@ -25,30 +25,39 @@ def pagina_principal():
     st.subheader('Faça sua simulação')
     # Nota: o nome do Ticker precisa ser maiúsculo para evitar duplicatas
     # nos modelos treinados - Manter o .upper()
-    ANALISE = st.text_input('Digite um ticker de um ativo com final ".SA" - Exemplo: PETR4.SA').upper()
+    ANALISE = st.text_input('Digite um ticker de um ativo - Exemplo: PETR4').upper()
 
     botao = st.button('Analisar')
 
     if botao:
-        # Necessario manter o .dropna() pelo período de holding da estratégia
-        df = aurum.model_training.make_predictions(ANALISE).dropna()
+        # Adiciona o .SA no fim da string ANALISE devido ao formato dos ticker brasileiros
+        # no Yahoo Finance
+        try:
+            try:
+                # Necessario manter o .dropna() pelo período de holding da estratégia
+                df = aurum.model_training.make_predictions(ANALISE + '.SA').dropna()
+            except:
+                df = aurum.model_training.make_predictions(ANALISE).dropna()
 
-        h_col1, h_col2 = st.columns(2)
-        with h_col1:
-            DATA_MIN = df.Date.dt.date.min() 
-            st.write(f'''Se tivesse investido **R\$ 1000.00** em **{ANALISE}** no dia {DATA_MIN:%d/%m/%Y},
-        hoje seu investimento equivaleria a **R\$ {1000*(df.RETORNO_ACUMULADO_BNH.to_list()[-1]):.2f}**.
-        ''')
-        with h_col2:
-            st.metric('Com nossa estratégia esse valor seria de:', f'R$ {1000*(df.RETORNO_ACUMULADO_MODELO.to_list()[-1]):.2f}')
+            h_col1, h_col2 = st.columns(2)
+            with h_col1:
+                DATA_MIN = df.Date.dt.date.min() 
+                st.write(f'''Se tivesse investido **R\$ 1000.00** em **{ANALISE}** no dia {DATA_MIN:%d/%m/%Y},
+            hoje seu investimento equivaleria a **R\$ {1000*(df.RETORNO_ACUMULADO_BNH.to_list()[-1]):.2f}**.
+            ''')
+            with h_col2:
+                st.metric('Com nossa estratégia esse valor seria de:', f'R$ {1000*(df.RETORNO_ACUMULADO_MODELO.to_list()[-1]):.2f}')
 
-        st.plotly_chart(plot_returns(df, ANALISE))
+            st.plotly_chart(plot_returns(df, ANALISE))
 
-        f_col1, f_col2 = st.columns(2)
-        with f_col1:
-            st.metric('Variação percentual:', f'{(df.RETORNO_ACUMULADO_MODELO.to_list()[-1]*100-100):.2f}%')
-        with f_col2:
-            st.metric('Lucro:', f'R$ {1000*(df.RETORNO_ACUMULADO_MODELO.to_list()[-1])-1000:.2f}')
+            f_col1, f_col2 = st.columns(2)
+            with f_col1:
+                st.metric('Variação percentual:', f'{(df.RETORNO_ACUMULADO_MODELO.to_list()[-1]*100-100):.2f}%')
+            with f_col2:
+                st.metric('Lucro:', f'R$ {1000*(df.RETORNO_ACUMULADO_MODELO.to_list()[-1])-1000:.2f}')
+        except:
+            st.error(f'O Ticker **{ANALISE}** não foi encontrado, por favor digite outro.')
+
 
     
     st.write('---')
@@ -93,7 +102,7 @@ def plot_returns(df, ticker):
             hoverinfo=None,
             name='Estratégia Aurum',
             line={                      
-                'color':'#FF7E66',
+                'color':'#ecab18',
                 'shape':'spline',
                 'smoothing':0.3,
                 'width':3
@@ -120,8 +129,8 @@ def plot_returns(df, ticker):
     # Atualizando adicionando titulo e mudando cor do Background
     figure.update_layout(
 
-        plot_bgcolor='#F7F7F7',
-        paper_bgcolor='#F7F7F7',
+        plot_bgcolor='#f1f1f1',
+        paper_bgcolor='#f1f1f1',
     )
 
     # Atualizando os Eixos
@@ -152,8 +161,8 @@ def plot_returns(df, ticker):
             font_size=14,
             yshift=30,
             align='center',
-            font_color='#050505',
-            bgcolor='#FF7E66',
+            font_color='#212121',
+            bgcolor='#ecab18',
     )
 
     return figure
