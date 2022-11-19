@@ -141,15 +141,14 @@ def plot_returns(df, ticker):
             gridcolor='#CFCFCE',
             fixedrange=True,
             color='#2B2B2B',
-            hoverformat='.0%'
-            
+            hoverformat='.0%'     
     )
+    
     figure.update_xaxes(
             showgrid=False,
             showticklabels=False,
             fixedrange=True,
-            hoverformat='%d/%m/%Y'
-            
+            hoverformat='%d/%m/%Y'   
     )
 
     # Dia com maior preço no último ano
