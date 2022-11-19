@@ -5,7 +5,7 @@ import plotly.express as px
 import pandas as pd
 import numpy as np
 
-from src.utils.utils import model_results, wallet_return
+from src.utils.utils import model_results, wallet_return, st_box_modelpredict
 
 TITULO_PROJETO = 'Aurum Praesagio'
 
@@ -70,14 +70,14 @@ def montar_carteira():
 
 
             ULTIMA_ABERTURA = RESULTADO_MODELOS_PIVOT.iloc[-1].Predicao.reset_index()
-            ULTIMA_ABERTURA['Sinal'] = ['Compra' if x == 1 else '-' for x in ULTIMA_ABERTURA.iloc[:, -1]]
+            ULTIMA_ABERTURA['Sinal'] = ['Compra' if x == 1 else 'Sem entrada' for x in ULTIMA_ABERTURA.iloc[:, -1]]
 
             st.markdown(f'**Posições em abertura para o dia {ULTIMA_ABERTURA.columns[1]:%d/%m/%Y}:**  ')
             COL_POS_ABERTURA = st.columns(5)
 
             for i, row in ULTIMA_ABERTURA.iterrows():
                 with COL_POS_ABERTURA[i]:
-                    st.metric(label=row.Ticker, value=row.Sinal)
+                    st_box_modelpredict(TICKER=row.Ticker.replace('.SA',''), SINAL=row.Sinal)
 
 
             
@@ -139,7 +139,7 @@ def plot_retorno_carteira(df):
             hoverinfo=None,
             name='Retorno da Carteira',
             line={                      
-                'color':'#FF7E66',
+                'color':'#ecab18',
                 'shape':'spline',
                 'smoothing':0.3,
                 'width':3
@@ -165,8 +165,8 @@ def plot_retorno_carteira(df):
 
     # Atualizando adicionando titulo e mudando cor do Background
     figure.update_layout(
-        plot_bgcolor='#F7F7F7',
-        paper_bgcolor='#F7F7F7',
+        plot_bgcolor='#f1f1f1',
+        paper_bgcolor='#f1f1f1',
         title='Evolução Patrimonial'
     )
 
