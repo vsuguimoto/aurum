@@ -1,5 +1,8 @@
 import streamlit as st
+import pandas as pd
 import os
+
+from src.utils.utils import AuditarModelo, st_metric_display, svg_write_html
 
 TITULO_PROJETO = 'Aurum Praesagio'
 
@@ -44,6 +47,39 @@ AUDITAR_MODELO = st.multiselect(
         format_func=lambda x: x.split('.')[0],
         max_selections=1 # Limita o número de ativos a serem escolhidos
     )
+
+if st.button('Analisar'):
+
+    INFO_MODELO = AuditarModelo(AUDITAR_MODELO)
+
+    METRIC_COLS = st.columns(5)
+
+    with METRIC_COLS[0]:
+        st_metric_display(f'{INFO_MODELO.ACCURACY*100:.2f}%', 'Acurácia<br>&nbsp;')
+
+    with METRIC_COLS[1]:
+        st_metric_display(f'{INFO_MODELO.PRECISION*100:.2f}%', 'Precisão<br>&nbsp;')
+
+    with METRIC_COLS[2]:
+        st_metric_display(f'{INFO_MODELO.MODEL_CUMULATIVE_RETURN*100 - 100:.2f}%', 'Retorno <br> acumulado')
+
+    with METRIC_COLS[3]:
+        st_metric_display(f'{INFO_MODELO.IBOV_BNH_RETURN*100 - 100:.2f}%', 'Retorno <br> IBOVESPA')
+
+    with METRIC_COLS[4]:
+        st_metric_display(f'{INFO_MODELO.ADPATED_SHARPE_RATIO:.2f}', 'Sharpe Ratio Adaptado')
+
+
+    plotly_fig_accuracy = INFO_MODELO.plot_accuracy_over_time()
+
+    st.plotly_chart(plotly_fig_accuracy)
+
+    ARVORE_SVG = INFO_MODELO.plot_decision_tree().svg()
+    
+    st.download_button('Download - Estratégia do Modelo', data=ARVORE_SVG, file_name=f'Modelo.svg')
+
+
+
 st.subheader('''
 Feedback
 ''')
