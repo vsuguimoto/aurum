@@ -219,7 +219,7 @@ def train_basic_model(TICKER):
 
     grid_dt.fit(X_train, y_train)
 
-    joblib.dump(grid_dt, f'models/Silver - {TICKER}.sav')
+    joblib.dump(grid_dt, f'models/Aurum - {TICKER}.sav')
 
     pass
 
@@ -233,11 +233,11 @@ def make_predictions(TICKER):
     from src.features.ft import technical_indicators
 
     try:
-        model = joblib.load(f'models/Silver - {TICKER}.sav')
+        model = joblib.load(f'models/Aurum - {TICKER}.sav')
 
     except:
         train_basic_model(TICKER)
-        model = joblib.load(f'models/Silver - {TICKER}.sav')
+        model = joblib.load(f'models/Aurum - {TICKER}.sav')
 
     df = get_ohlcv(TICKER, TREINO=False)
     df = technical_indicators(df)
@@ -275,19 +275,5 @@ def make_predictions(TICKER):
     df['RETORNO_ACUMULADO_BNH'] = 1 + (df['Close'] - df.loc[0, 'Close'])/df.loc[0, 'Close']
 
     return df
-
-
-def create_setup(X_train, y_train):
-
-    from sklearn.tree import DecisionTreeClassifier
-    
-    dtc = DecisionTreeClassifier(
-        random_state = 42,
-        max_depth = 4
-    )
-
-    dtc.fit(X_train, y_train)
-
-    return dtc
 
 
