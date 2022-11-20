@@ -14,18 +14,18 @@ st.set_page_config(
         menu_items=None)
 
 st.markdown('# Sobre o Projeto')
-st.info('“Everything that happens once can never happen again. But everything that happens twice will surely happen a third time.” ― Paulo Coelho')
+
 st.subheader('''
 Visão Geral
 ''')
 st.markdown('''
-Aurum Praesagio em tradução direta do Latim significa Ouro e Pressentimento, desenvolvemos esse projeto como uma alternativa a analise quantitativa clássica realizada pelas pessoas físicas.
+Aurum Praesagio em tradução direta do Latim significa Ouro e Pressentimento, desenvolvemos esse projeto para dar acesso a analise quantitativa de maneira simplificada e responder a principal pergunta de todo investidor:
+''')
 
-Nosso objetivo é dar acesso a estratégias quantitativas de forma simplificada e transparente.
+st.info('**Quando eu devo comprar?**')
 
-É comum encontrar pessoas que ainda seguem cegamente gurus do mercado financeiro que possuem um *setup* milagroso que irá te fazer ganhar rios de dinheiro, mas o que eles não te contam é que essas estratégias não são generalizáveis e muitas vezes não passam de um *overfitting* dos indicadores utilizados.
-
-
+st.markdown('''
+É comum encontrar pessoas que ao iniciarem no mercado financeiro buscarem formas fáceis de investir e acabarem se deparando ou com taxas abusivas de gestores, ou com falsos gurus que prometem ganhos rápidos, ou com pessoas que falam em códigos de forma que sempre estão corretos.
 ''')
 
 st.subheader('''
@@ -33,7 +33,7 @@ Limitações
 ''')
 st.markdown('''
  - **Entrada da operação**: utilizamos como entrada em uma posição de um ativo o preço de fechamento do dia, contudo não é possível abrir uma posição se o mercado está fechado, para tornar a entrada viável é necessário ter acesso a dados intradiários que em sua maioria são pagos. Dado as implicações legais do projeto, preferimos manter a limitação.
- - **Não podemos prever o futuro só olhando o passado**: todos os modelos treinados partem do principio que a partir dos dados hitóricos de um único ativo podemos prever a direção que aquele ativo irá ter, o que não é verdade.
+ - **Retornos passados não indicam lucros futuros**: os retornos do modelo e ou da carteira não são garantia de que seguindo nossa ou qualquer outra estratégia obterá lucros. Em todas operações há riscos envolvidos.
  - **Feriados**: nossa análise considera apenas dias úteis, isso pode ser uma fonte de confusão, imagine que abra uma posição terça-feira 08/11/2022, pela estratégia o cliente deve manter o ativo sob custódia por 5 dias úteis, ou uma semana, contudo dia 15/11/2022 é feriado nacional e a posição deve ser mantida até quarta-feira, essa confusão dura ao menos 5 dias úteis.
 ''')
 
@@ -78,7 +78,22 @@ if st.button('Analisar'):
     
     st.download_button('Download - Estratégia do Modelo', data=ARVORE_SVG, file_name=f'Modelo.svg')
 
+METRIC_EXPLANATION_COLS = st.columns(5)
 
+with METRIC_EXPLANATION_COLS[0]:
+    st.markdown('**Acurácia:** Proporção entre acertos e erros, nos diz o quanto o modelo está acertando.')
+
+with METRIC_EXPLANATION_COLS[1]:
+    st.markdown('**Precisão:** Proporção de vezes que o modelo diz que o preço de uma ação irá subir com o número de vezes que o preço realmente sobe.')
+
+with METRIC_EXPLANATION_COLS[2]:
+    st.markdown('**Retorno Acumulado:** Retorno acumulado do modelo para os últimos 6 meses.')
+
+with METRIC_EXPLANATION_COLS[3]:
+    st.markdown('**Retorno IBOVESPA:** Retorno acumulado do IBOVESPA para os últimos 6 meses.')
+
+with METRIC_EXPLANATION_COLS[4]:
+    st.markdown('**Sharpe Ratio Adaptado:** Relação entre o retorno do modelo comparado com o IBOVESPA ponderado pelo seu risco. Quanto maior, maior o retorno sobre o risco de investir no modelo.')
 
 st.subheader('''
 Feedback
