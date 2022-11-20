@@ -5,7 +5,8 @@ import plotly.express as px
 import pandas as pd
 import numpy as np
 
-from src.utils.utils import model_results, wallet_return, st_box_modelpredict
+from src.utils.utils import model_results, wallet_return, st_box_modelpredict, st_metric_model_return
+from src.data.data import get_ohlcv
 
 TITULO_PROJETO = 'Aurum Praesagio'
 
@@ -19,11 +20,7 @@ st.set_page_config(
 def header():
     st.markdown('## Monte sua carteira')
     st.markdown('''
-    Selecione os modelos dos ativos correspondentes para compor sua carteira. Temos dois tipos de modelos
-    disponíveis:  
-        - Modelos Silver: estratégias desenvolvidas automaticamente pela inteligência artificial com base nos indicadores pré selecionados pelos analistas.  
-        - Modelos Gold: estratégias desenvolvidas pelos especialistas utilizando inteligência artificial com indicadores customizados
-
+    Selecione os modelos dos ativos correspondentes para compor sua carteira.
     ''')
 
     st.subheader('Como funciona a estratégia?')
@@ -56,11 +53,11 @@ def montar_carteira():
         with st.expander('Balancear a carteira',expanded=False):
             PESOS = [atribuir_peso(TICKER,VALOR_DEFAULT) for TICKER in TICKERS[0]]
             
-            st.metric(label='Composição percentual final:',value=sum(PESOS)*100)
+            st.metric(label='Composição percentual final:',value=f'{sum(PESOS)*100:.2f}')
 
         BOTAO_BALANCEAR_CARTEIRA = st.button('Montar carteira')
 
-        if BOTAO_BALANCEAR_CARTEIRA:
+        if BOTAO_BALANCEAR_CARTEIRA and sum(PESOS) == 1:
 
             RESULTADO_MODELOS = [model_results(MODEL) for MODEL in MODELOS_SELECIONADOS]
             RESULTADO_MODELOS_PIVOT = (pd.concat(RESULTADO_MODELOS)
@@ -93,15 +90,19 @@ def montar_carteira():
             if len(RESULT_ULT_POSICAO) > 0:
                 for i, res in RESULT_ULT_POSICAO.iterrows():
                     with COLS_POS_FINALIZACO[i]:
-                        st.metric(label=res.Ticker, value=f'{res.iloc[-1]:.2%}')
+                        st_metric_model_return(TICKER=res.Ticker.replace('.SA',''), RETURN=res.iloc[-1])
             else:
                 st.markdown('Sem posições abertas.')
 
 
 
             RESULTS = wallet_return(RESULTADO_MODELOS, PESOS)
+  
 
             st.plotly_chart(plot_retorno_carteira(RESULTS))
+        
+        elif sum(PESOS) != 1:
+            st.warning(f'Ajuste a composição da carteira.')
 
 
 
@@ -128,9 +129,13 @@ def plot_retorno_carteira(df):
 
     pyo.init_notebook_mode()
 
+
+    IBOV_DATA = get_ohlcv('^BVSP', TREINO=False)
+    IBOV_DATA = IBOV_DATA[(IBOV_DATA.Date >= df.Date.min()) & (IBOV_DATA.Date <= df.Date.max())].reset_index(drop=True)
+    IBOV_DATA['Retorno Buy and Hold'] = (IBOV_DATA['Close'] - IBOV_DATA.loc[0, 'Close'])/IBOV_DATA.loc[0, 'Close']
+
     figure = go.Figure(
     )
-
 
 
     figure.add_trace(
@@ -147,22 +152,22 @@ def plot_retorno_carteira(df):
             }
         )
     )
-    # TODO: Incluir IBOV
-    # figure.add_trace(
-    #     go.Scatter(
-    #         x=df.Date,
-    #         y=df.RETORNO_ACUMULADO_BNH,
-    #         hoverinfo=None,
-    #         name='Buy and Hold',
-    #         line={                      
-    #             'color':'#2B2B2B',
-    #             'shape':'spline',
-    #             'smoothing':0.3,
-    #             'width':3
-    #         },
-    #         opacity=.5
-    #     )
-    # )
+
+    figure.add_trace(
+        go.Scatter(
+            x=IBOV_DATA.Date,
+            y=IBOV_DATA['Retorno Buy and Hold'],
+            hoverinfo=None,
+            name='Retorno do IBOVESPA',
+            line={                      
+                'color':'#2B2B2B',
+                'shape':'spline',
+                'smoothing':0.3,
+                'width':3
+            },
+            opacity=.3
+        )
+    )
 
     # Atualizando adicionando titulo e mudando cor do Background
     figure.update_layout(
@@ -185,6 +190,7 @@ def plot_retorno_carteira(df):
     figure.update_xaxes(
             showgrid=False,
             showticklabels=True,
+            color='#2B2B2B',
             fixedrange=True,
             hoverformat='%d/%m/%Y'
             
@@ -192,5 +198,5 @@ def plot_retorno_carteira(df):
 
     return figure
 
-if __name__=='__main__':
+if __name__== '__main__':
     montar_carteira()
