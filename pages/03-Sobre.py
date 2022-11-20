@@ -7,7 +7,7 @@ from src.utils.utils import AuditarModelo, st_metric_display, svg_write_html
 TITULO_PROJETO = 'Aurum Praesagio'
 
 st.set_page_config(
-        page_title=f'{TITULO_PROJETO} - Análise',
+        page_title=f'{TITULO_PROJETO} - Sobre',
         page_icon='🔮',
         layout="centered",
         initial_sidebar_state="auto",
