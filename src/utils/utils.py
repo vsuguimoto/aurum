@@ -81,7 +81,7 @@ def wallet_return(RETURN_LIST, TICKER_WEIGHT):
 
     RESULTADOS = pd.DataFrame(RETORNO_ACUMULADO_MODELO)
     RESULTADOS['Date'] = RETURN_LIST[0]['Date']
-    RESULTADOS['Retorno da Carteira'] = RETORNO_ACUMULADO_MODELO
+    RESULTADOS['Retorno da Carteira'] = RETORNO_ACUMULADO_MODELO - 1
 
     return RESULTADOS[['Date', 'Retorno da Carteira']]
 
@@ -168,6 +168,46 @@ def st_metric_display(METRIC_VALUE, METRIC_DESCRIPTION):
     st.markdown(htmlstr, unsafe_allow_html=True)
 
 
+def st_metric_model_return(RETURN, TICKER):
+
+    import streamlit as st
+
+
+    if RETURN > 0:
+        wch_colour_box = (164,199,126)
+        wch_colour_font = (33, 33, 33)
+        iconname = "fas fa-plus"
+
+    else:
+        wch_colour_box = (199, 127, 125)
+        wch_colour_font = (33, 33, 33)
+        iconname = "fas fa-minus"
+    
+    fontsize = 22
+    sline = TICKER
+    lnk = '<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">'
+
+
+
+    htmlstr = f"""<p style='background-color: rgb({wch_colour_box[0]}, 
+                                                {wch_colour_box[1]}, 
+                                                {wch_colour_box[2]}, 0.75); 
+                            color: rgb({wch_colour_font[0]}, 
+                                    {wch_colour_font[1]}, 
+                                    {wch_colour_font[2]}, 0.75); 
+                            font-size: {fontsize}px; 
+                            border-radius: 7px; 
+                            padding-left: 12px; 
+                            padding-top: 18px; 
+                            padding-bottom: 18px; 
+                            line-height:25px;'>
+                            <i class='{iconname} fa-xs'></i> {abs(RETURN):.2%}
+                            </style><BR><span style='font-size: 16px; 
+                            margin-top: 0;'>{sline}</style></span></p>"""
+
+    st.markdown(lnk + htmlstr, unsafe_allow_html=True)
+
+
 class AuditarModelo:
 
     import warnings
@@ -199,7 +239,7 @@ class AuditarModelo:
     def load_model(self, NOME_MODELO):
         import joblib
         
-        return joblib.load(f'models/Silver - {self.TICKER}.sav')
+        return joblib.load(f'models/Aurum - {self.TICKER}.sav')
 
     def load_ticker_test_data(self, TICKER):
 
