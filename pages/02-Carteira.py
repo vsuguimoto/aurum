@@ -129,7 +129,6 @@ def plot_retorno_carteira(df):
 
     pyo.init_notebook_mode()
 
-
     IBOV_DATA = get_ohlcv('^BVSP', TREINO=False)
     IBOV_DATA = IBOV_DATA[(IBOV_DATA.Date >= df.Date.min()) & (IBOV_DATA.Date <= df.Date.max())].reset_index(drop=True)
     IBOV_DATA['Retorno Buy and Hold'] = (IBOV_DATA['Close'] - IBOV_DATA.loc[0, 'Close'])/IBOV_DATA.loc[0, 'Close']
