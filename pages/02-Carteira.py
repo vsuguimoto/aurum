@@ -122,12 +122,14 @@ def atribuir_peso(TICKER,VALOR_DEFAULT):
     return PESO/100
 
 
-def plot_retorno_carteira(df):
+def plot_retorno_carteira(DATA):
 
     import plotly.graph_objects as go
     import plotly.offline as pyo
 
     pyo.init_notebook_mode()
+
+    df = DATA.dropna(subset='Retorno da Carteira')
 
     IBOV_DATA = get_ohlcv('^BVSP', TREINO=False)
     IBOV_DATA = IBOV_DATA[(IBOV_DATA.Date >= df.Date.min()) & (IBOV_DATA.Date <= df.Date.max())].reset_index(drop=True)

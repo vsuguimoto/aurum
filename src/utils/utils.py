@@ -50,7 +50,6 @@ def model_results(MODEL_NAME):
     TEST = get_ohlcv(TICKER, TREINO=False)
     TEST = technical_indicators(TEST)
     
-    TEST = TEST.dropna(subset='LEAK_Retorno')
 
     MODEL = joblib.load(f'models/{MODEL_NAME}')
     TEST['Predicao'] = MODEL.predict(TEST[MODEL.feature_names_in_])
