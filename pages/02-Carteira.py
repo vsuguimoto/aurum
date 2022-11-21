@@ -28,7 +28,7 @@ def header():
     **1º** - Monte sua carteira com até 5 ativos;  
     **2º** - Caso prefira, mude o peso de cada ativo na composição da carteira;  
     **3º** - Verifique se há sinais de Compra no tópico Posições em abertura, caso houver, abra uma posição no ativo de acordo com a proporção estipulada;  
-    **4º** - Após 5 dias úteis, finalize a posição, ou mantenha caso haja uma nova abertura para o dia.
+    **4º** - Após 5 dias úteis, finalize a posição.
     ''')
     st.markdown('---')
 
