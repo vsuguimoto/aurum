@@ -12,8 +12,6 @@ Existem 2 principais módulos:
 - Análise da Casa:
     - Modelo de ML treinado pela equipe com foco nos investidores agressivos iniciantes. 
     A carteira ainda é montada pelo cliente.
-- Autosserviço:
-    - O cliente seleciona os indicadores de maior interesse e desenvolve seu próprio modelo.
 
 
 **Equipe:**
