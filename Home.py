@@ -16,7 +16,7 @@ def pagina_principal():
     
     st.title(TITULO_PROJETO)
     
-    st.subheader('Utilizando Inteligência Artificial para aumentar seu lucro!')
+    st.subheader('Utilizando Inteligência Artificial para te ajudar a investir!')
     st.write('''
     Desenvolvemos diversos modelos de AI com os indicadores técnicos mais utilizados no mercado para simplificar sua tomada de decisão
     poupando seu tempo e melhorando sua assertividade.
