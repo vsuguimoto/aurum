@@ -2,6 +2,8 @@ import streamlit as st
 import numpy as np
 import aurum
 
+from src.utils.utils import st_metric_display
+
 
 TITULO_PROJETO = 'Aurum Praesagio'
 
@@ -48,13 +50,17 @@ def pagina_principal():
             with h_col2:
                 st.metric('Com nossa estratégia esse valor seria de:', f'R$ {1000*(df.RETORNO_ACUMULADO_MODELO.to_list()[-1]):.2f}')
 
-            st.plotly_chart(plot_returns(df, ANALISE))
-
             f_col1, f_col2 = st.columns(2)
             with f_col1:
-                st.metric('Variação percentual:', f'{(df.RETORNO_ACUMULADO_MODELO.to_list()[-1]*100-100):.2f}%')
+                METRIC_RETORNO_ACUMULADO = f'{(df.RETORNO_ACUMULADO_MODELO.to_list()[-1]*100-100):.2f}%'
+                st_metric_display(METRIC_DESCRIPTION='Variação percentual', METRIC_VALUE=METRIC_RETORNO_ACUMULADO)
             with f_col2:
-                st.metric('Lucro:', f'R$ {1000*(df.RETORNO_ACUMULADO_MODELO.to_list()[-1])-1000:.2f}')
+                METRIC_LUCRO = f'R$ {1000*(df.RETORNO_ACUMULADO_MODELO.to_list()[-1])-1000:.2f}'
+                st_metric_display(METRIC_DESCRIPTION='Lucro', METRIC_VALUE=METRIC_LUCRO)
+
+            st.plotly_chart(plot_returns(df, ANALISE))
+
+
         except:
             st.error(f'O Ticker **{ANALISE}** não foi encontrado, por favor digite outro.')
 
