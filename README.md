@@ -12,6 +12,7 @@ Existem 2 principais módulos:
 - Análise da Casa:
     - Modelo de ML treinado pela equipe com foco nos investidores agressivos iniciantes. 
     A carteira ainda é montada pelo cliente.
+    - Sobre: baseado no framework de documentação e benchmark de modelos proposto pela Google. Esta seção é dedicada para o acompanhamento das métricas do modelos e documentação das limitações da análise.
 
 
 **Equipe:**
