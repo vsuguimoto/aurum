@@ -35,6 +35,7 @@ st.markdown('''
  - **Entrada da operação**: utilizamos como entrada em uma posição de um ativo o preço de fechamento do dia, contudo não é possível abrir uma posição se o mercado está fechado, para tornar a entrada viável é necessário ter acesso a dados intradiários que em sua maioria são pagos. Dado as implicações legais do projeto, preferimos manter a limitação.
  - **Retornos passados não indicam lucros futuros**: os retornos do modelo e ou da carteira não são garantia de que seguindo nossa ou qualquer outra estratégia obterá lucros. Em todas operações há riscos envolvidos.
  - **Feriados**: nossa análise considera apenas dias úteis, isso pode ser uma fonte de confusão, imagine que abra uma posição terça-feira 08/11/2022, pela estratégia o cliente deve manter o ativo sob custódia por 5 dias úteis, ou uma semana, contudo dia 15/11/2022 é feriado nacional e a posição deve ser mantida até quarta-feira, essa confusão dura ao menos 5 dias úteis.
+ - **Validade do Modelo**: a forma como treinamos o modelo considera um período entre datas fixas, conforme o tempo passa e a performance do modelo diminua é necessário retreinar os modelos, isso não é feito de forma automatizada, recomendamos verificar a performance no módulo Sobre do Aurum Praesagio.
 ''')
 
 
